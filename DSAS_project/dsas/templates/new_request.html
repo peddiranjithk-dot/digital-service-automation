@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}New Request{% endblock %}
+{% block content %}
+<div class="form-card">
+  <h2>Submit a Service Request</h2>
+  <p class="muted">
+    Choose the category and priority that best fit your issue. Once
+    submitted, any matching automation rules run instantly — for example,
+    Network issues are auto-prioritized and Account &amp; Access requests
+    are auto-assigned.
+  </p>
+
+  <form method="POST">
+    <label>Title</label>
+    <input type="text" name="title" required autofocus
+           placeholder="e.g. Can't access shared drive">
+
+    <label>Description</label>
+    <textarea name="description" rows="6" required
+      placeholder="Describe the issue in detail..."></textarea>
+
+    <div class="grid-2">
+      <div>
+        <label>Category</label>
+        <select name="category">
+          {% for c in categories %}
+          <option value="{{ c }}">{{ c }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label>Priority</label>
+        <select name="priority">
+          {% for p in priorities %}
+          <option value="{{ p }}" {% if p == 'Medium' %}selected{% endif %}>{{ p }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block">Submit Request</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}My Requests{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h2>My Service Requests</h2>
+  <a href="{{ url_for('new_request') }}" class="btn btn-primary">+ New Request</a>
+</div>
+
+{% if requests %}
+<div class="table-wrap">
+  <table class="ticket-table">
+    <thead>
+      <tr><th>#</th><th>Title</th><th>Category</th><th>Priority</th>
+          <th>Status</th><th>Created</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for r in requests %}
+      <tr>
+        <td>{{ r.id }}</td>
+        <td>{{ r.title }}</td>
+        <td>{{ r.category }}</td>
+        <td><span class="badge badge-priority-{{ r.priority|lower }}">{{ r.priority }}</span></td>
+        <td><span class="badge badge-status-{{ r.status|lower|replace(' ', '-') }}">{{ r.status }}</span></td>
+        <td>{{ r.created_at.strftime('%d %b %Y') }}</td>
+        <td><a href="{{ url_for('request_detail', request_id=r.id) }}" class="link">View →</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <p>You haven't submitted any service requests yet.</p>
+  <a href="{{ url_for('new_request') }}" class="btn btn-primary">Submit your first request</a>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>Digital Service Automation</h1>
+  <p class="subtitle">
+    Stop triaging service requests by hand. Define IF-THEN automation
+    rules once, and let the system auto-prioritize, auto-assign,
+    auto-escalate and auto-close requests for you.
+  </p>
+  <div class="hero-actions">
+    <a class="btn btn-primary" href="{{ url_for('login') }}">Login</a>
+    <a class="btn btn-outline" href="{{ url_for('register') }}">Create an account</a>
+  </div>
+</section>
+
+<section class="feature-grid">
+  <div class="feature-card">
+    <h3>⚡ Instant Rules</h3>
+    <p>Rules fire the moment a request is created or its status changes
+       — e.g. auto-assign every Network issue to the network admin.</p>
+  </div>
+  <div class="feature-card">
+    <h3>⏱ SLA Auto-Escalation</h3>
+    <p>A background scheduler checks every open request's age and
+       auto-escalates priority when it breaches your SLA threshold.</p>
+  </div>
+  <div class="feature-card">
+    <h3>🧹 Auto-Close Stale Tickets</h3>
+    <p>Resolved requests with no follow-up are automatically closed
+       after a configurable grace period.</p>
+  </div>
+  <div class="feature-card">
+    <h3>📜 Full Audit Trail</h3>
+    <p>Every automated action is logged and notified — nothing happens
+       silently, so admins always know what the system did and why.</p>
+  </div>
+</section>
+{% endblock %}

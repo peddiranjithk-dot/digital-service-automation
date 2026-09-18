@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Automation Activity Log{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h2>Automation Activity Log</h2>
+  <a href="{{ url_for('admin_dashboard') }}" class="link">← Back to Dashboard</a>
+</div>
+
+{% if logs %}
+<div class="table-wrap">
+  <table class="ticket-table">
+    <thead>
+      <tr><th>Time</th><th>Request</th><th>Rule</th><th>Action Taken</th></tr>
+    </thead>
+    <tbody>
+      {% for log in logs %}
+      <tr>
+        <td>{{ log.created_at.strftime('%d %b %Y, %H:%M:%S') }}</td>
+        <td><a class="link" href="{{ url_for('request_detail', request_id=log.request_id) }}">#{{ log.request_id }}</a></td>
+        <td>{{ log.rule.name if log.rule else '—' }}</td>
+        <td>{{ log.action_taken }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state"><p>No automated actions have run yet.</p></div>
+{% endif %}
+{% endblock %}

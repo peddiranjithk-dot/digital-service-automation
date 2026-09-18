@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="auth-card">
+  <h2>Welcome back</h2>
+  <p class="muted">Log in to submit or manage automated service requests.</p>
+  <form method="POST">
+    <label>Email</label>
+    <input type="email" name="email" required autofocus>
+    <label>Password</label>
+    <input type="password" name="password" required>
+    <button type="submit" class="btn btn-primary btn-block">Login</button>
+  </form>
+  <p class="muted small">No account? <a href="{{ url_for('register') }}">Register here</a></p>
+  <p class="muted small">Demo admin: <code>admin@dsas.com</code> / <code>admin123</code></p>
+</div>
+{% endblock %}

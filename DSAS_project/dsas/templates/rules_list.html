@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Automation Rules{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h2>Automation Rules</h2>
+  <a href="{{ url_for('new_rule') }}" class="btn btn-primary">+ New Rule</a>
+</div>
+
+{% if rules %}
+<div class="rule-grid">
+  {% for r in rules %}
+  <div class="rule-card {{ '' if r.is_active else 'rule-inactive' }}">
+    <div class="rule-head">
+      <h3>{{ r.name }}</h3>
+      <span class="badge {{ 'badge-status-resolved' if r.is_active else 'badge-neutral' }}">
+        {{ 'Active' if r.is_active else 'Inactive' }}
+      </span>
+    </div>
+    <p class="rule-trigger">Trigger: <strong>{{ r.trigger_type }}</strong></p>
+    <p class="rule-condition">
+      IF <code>{{ r.condition_field }}</code> {{ r.condition_operator|replace('_',' ') }}
+      <code>{{ r.condition_value }}</code>
+    </p>
+    <p class="rule-action">
+      THEN <code>{{ r.action_type|replace('_',' ') }}</code>
+      {% if r.action_value %} → <code>{{ r.action_value }}</code>{% endif %}
+    </p>
+    <p class="muted small">Fired {{ r.run_count or 0 }} time(s)</p>
+    <div class="rule-actions">
+      <form method="POST" action="{{ url_for('toggle_rule', rule_id=r.id) }}">
+        <button type="submit" class="btn btn-outline btn-sm">
+          {{ 'Deactivate' if r.is_active else 'Activate' }}
+        </button>
+      </form>
+      <form method="POST" action="{{ url_for('delete_rule', rule_id=r.id) }}"
+            onsubmit="return confirm('Delete this rule?');">
+        <button type="submit" class="btn btn-ghost btn-sm">Delete</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <p>No automation rules yet.</p>
+  <a href="{{ url_for('new_rule') }}" class="btn btn-primary">Create your first rule</a>
+</div>
+{% endif %}
+{% endblock %}

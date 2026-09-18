@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Request #{{ req.id }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h2>Request #{{ req.id }}: {{ req.title }}</h2>
+  <a href="{{ url_for('admin_dashboard') if current_user.is_admin else url_for('user_dashboard') }}"
+     class="link">← Back</a>
+</div>
+
+<div class="ticket-meta">
+  <span class="badge badge-status-{{ req.status|lower|replace(' ', '-') }}">{{ req.status }}</span>
+  <span class="badge badge-priority-{{ req.priority|lower }}">{{ req.priority }} priority</span>
+  <span class="badge badge-neutral">{{ req.category }}</span>
+  <span class="muted">Requested by {{ req.requester.name }} · {{ req.created_at.strftime('%d %b %Y, %H:%M') }}</span>
+  {% if req.assignee %}<span class="muted">· Assigned to {{ req.assignee.name }}</span>{% endif %}
+</div>
+
+<div class="ticket-body">
+  <p>{{ req.description }}</p>
+</div>
+
+{% if current_user.is_admin %}
+<div class="admin-controls">
+  <h3>Manual Override</h3>
+  <p class="muted small">Manual status changes still trigger any matching
+     "on_status_change" automation rules.</p>
+  <form method="POST" action="{{ url_for('update_request', request_id=req.id) }}" class="grid-3">
+    <div>
+      <label>Status</label>
+      <select name="status">
+        {% for s in statuses %}
+        <option value="{{ s }}" {% if s == req.status %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label>Priority</label>
+      <select name="priority">
+        {% for p in priorities %}
+        <option value="{{ p }}" {% if p == req.priority %}selected{% endif %}>{{ p }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Update Request</button>
+  </form>
+</div>
+{% endif %}
+
+<div class="comments-section">
+  <h3>Automation Activity for this Request</h3>
+  {% if logs %}
+  <div class="timeline">
+    {% for log in logs %}
+    <div class="timeline-item">
+      <span class="timeline-dot"></span>
+      <div>
+        <p class="timeline-note">{{ log.action_taken }}</p>
+        <span class="muted small">
+          {{ log.created_at.strftime('%d %b %Y, %H:%M') }}
+          {% if log.rule %} · rule: <strong>{{ log.rule.name }}</strong>{% endif %}
+        </span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="muted">No automation has acted on this request yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

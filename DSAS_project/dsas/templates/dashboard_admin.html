@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h2>Admin Dashboard</h2>
+  <div class="head-actions">
+    <form method="POST" action="{{ url_for('run_scheduled_now') }}">
+      <button type="submit" class="btn btn-outline">⚡ Run Automation Now</button>
+    </form>
+    <a href="{{ url_for('rules_list') }}" class="btn btn-primary">Manage Rules</a>
+  </div>
+</div>
+
+<p class="muted small">
+  A background job also runs the "scheduled" rules automatically every
+  60 seconds (SLA escalation, auto-close). Use "Run Automation Now" to
+  trigger an immediate pass, e.g. right after adding a new rule.
+</p>
+
+<div class="stat-cards">
+  <div class="stat-card"><span class="stat-num">{{ stats.total }}</span><span class="stat-label">Total Requests</span></div>
+  <div class="stat-card"><span class="stat-num">{{ stats.open }}</span><span class="stat-label">Open</span></div>
+  <div class="stat-card"><span class="stat-num">{{ stats.in_progress }}</span><span class="stat-label">In Progress</span></div>
+  <div class="stat-card"><span class="stat-num">{{ stats.resolved }}</span><span class="stat-label">Resolved</span></div>
+  <div class="stat-card"><span class="stat-num">{{ stats.active_rules }}</span><span class="stat-label">Active Rules</span></div>
+  <div class="stat-card stat-highlight"><span class="stat-num">{{ stats.automated_actions }}</span><span class="stat-label">Automated Actions Logged</span></div>
+</div>
+
+{% if requests %}
+<div class="table-wrap">
+  <table class="ticket-table">
+    <thead>
+      <tr><th>#</th><th>Title</th><th>Requester</th><th>Category</th>
+          <th>Priority</th><th>Status</th><th>Assigned</th><th>Age (h)</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for r in requests %}
+      <tr>
+        <td>{{ r.id }}</td>
+        <td>{{ r.title }}</td>
+        <td>{{ r.requester.name }}</td>
+        <td>{{ r.category }}</td>
+        <td><span class="badge badge-priority-{{ r.priority|lower }}">{{ r.priority }}</span></td>
+        <td><span class="badge badge-status-{{ r.status|lower|replace(' ', '-') }}">{{ r.status }}</span></td>
+        <td>{{ r.assignee.name if r.assignee else '—' }}</td>
+        <td>{{ r.age_hours() }}</td>
+        <td><a href="{{ url_for('request_detail', request_id=r.id) }}" class="link">Manage →</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state"><p>No service requests yet.</p></div>
+{% endif %}
+{% endblock %}

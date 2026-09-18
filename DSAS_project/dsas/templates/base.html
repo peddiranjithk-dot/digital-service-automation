@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}DSAS{% endblock %} — Digital Service Automation</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-inner">
+    <a class="brand" href="{{ url_for('index') }}">
+      <span class="brand-icon">⚙</span> DSAS
+    </a>
+    <div class="nav-links">
+      {% if current_user.is_authenticated %}
+        {% if current_user.is_admin %}
+          <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+          <a href="{{ url_for('rules_list') }}">Automation Rules</a>
+          <a href="{{ url_for('automation_logs') }}">Activity Log</a>
+        {% else %}
+          <a href="{{ url_for('user_dashboard') }}">My Requests</a>
+          <a href="{{ url_for('new_request') }}">New Request</a>
+        {% endif %}
+        <a href="{{ url_for('notifications') }}" class="bell">
+          🔔{% if unread_count %}<span class="bell-badge">{{ unread_count }}</span>{% endif %}
+        </a>
+        <span class="nav-user">{{ current_user.name }} <em>({{ current_user.role }})</em></span>
+        <a href="{{ url_for('logout') }}" class="btn-ghost">Logout</a>
+      {% else %}
+        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('register') }}" class="btn-ghost">Register</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+<main class="container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-wrap">
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+  <p>Digital Service Automation System &mdash; rules-engine powered by Flask + APScheduler</p>
+</footer>
+</body>
+</html>

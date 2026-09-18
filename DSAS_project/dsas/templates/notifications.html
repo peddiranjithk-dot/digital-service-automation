@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Notifications{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h2>Notifications</h2>
+</div>
+
+{% if notes %}
+<div class="table-wrap">
+  {% for n in notes %}
+  <div class="comment">
+    <p>{{ n.message }}</p>
+    <span class="muted small">
+      {{ n.created_at.strftime('%d %b %Y, %H:%M') }}
+      {% if n.request_id %} · <a class="link" href="{{ url_for('request_detail', request_id=n.request_id) }}">View request #{{ n.request_id }}</a>{% endif %}
+    </span>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state"><p>No notifications yet — automated actions that affect you will show up here.</p></div>
+{% endif %}
+{% endblock %}

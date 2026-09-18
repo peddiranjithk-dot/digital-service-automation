@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}New Automation Rule{% endblock %}
+{% block content %}
+<div class="form-card form-card-wide">
+  <h2>Create Automation Rule</h2>
+  <p class="muted">
+    Build an IF-THEN rule. <code>on_create</code> and
+    <code>on_status_change</code> rules fire instantly on the affected
+    request. <code>scheduled</code> rules are checked every 60 seconds
+    (or immediately via "Run Automation Now") against every open request
+    — useful for age-based fields like <code>age_hours</code>.
+  </p>
+
+  <form method="POST">
+    <label>Rule Name</label>
+    <input type="text" name="name" required placeholder="e.g. Escalate old Billing issues">
+
+    <label>Trigger</label>
+    <select name="trigger_type" required>
+      {% for t in trigger_types %}
+      <option value="{{ t }}">{{ t }}</option>
+      {% endfor %}
+    </select>
+
+    <h4>Condition (IF)</h4>
+    <div class="grid-3">
+      <div>
+        <label>Field</label>
+        <select name="condition_field" required>
+          {% for f in condition_fields %}
+          <option value="{{ f }}">{{ f }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label>Operator</label>
+        <select name="condition_operator" required>
+          {% for op in condition_operators %}
+          <option value="{{ op }}">{{ op|replace('_',' ') }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label>Value</label>
+        <input type="text" name="condition_value" required
+               placeholder="e.g. Network, Critical, 24">
+      </div>
+      <div></div>
+    </div>
+    <p class="muted small">
+      Tip: for <code>category</code> use one of {{ categories|join(', ') }}.
+      For <code>priority</code>/<code>status</code> use
+      {{ priorities|join(', ') }} / {{ statuses|join(', ') }}.
+      For <code>age_hours</code> / <code>hours_since_resolved</code>, use a number.
+    </p>
+
+    <h4>Action (THEN)</h4>
+    <div class="grid-2">
+      <div>
+        <label>Action Type</label>
+        <select name="action_type" required>
+          {% for a in action_types %}
+          <option value="{{ a }}">{{ a|replace('_',' ') }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label>Action Value</label>
+        <input type="text" name="action_value"
+               placeholder="Priority/Status name, user email, or notification text">
+      </div>
+    </div>
+    <p class="muted small">
+      Examples — set_priority: <code>High</code>. set_status: <code>Closed</code>.
+      assign_user: <code>admin@dsas.com</code>. notify: any message text.
+      escalate_priority: leave value blank.
+    </p>
+
+    <button type="submit" class="btn btn-primary btn-block">Create Rule</button>
+  </form>
+</div>
+{% endblock %}
